@@ -24,6 +24,6 @@ int main(int argc, char **argv) {
     cout << "a[" << i << "]: " << a[i] << endl;
   initenv(argc, argv, my_rank, p);
   
-
+  MPI_Finalize();
   return 0;
 }
