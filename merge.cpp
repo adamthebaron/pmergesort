@@ -54,8 +54,16 @@ smerge(int* a, int first1, int last1, int first2, int last2) {
 void
 pmerge(int* a, int first, int last, int mid) {
   /* hell goes here */
-  int *sranka[];
-  int *srankb[];
+  int x = last / LOG(last);
+  cout << "x: " << x << endl;
+  int aselect[x];
+  int bselect[x];
+  int* sranka[];
+  int* srankb[];
+
+  for (int i = 0; i < last + 1 - LOG(last); i++)
+    aselect[i] = a[i];
+  
 }
 
 void
