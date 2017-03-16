@@ -2,11 +2,6 @@
 
 using namespace std;
 
-/*
- * mpicxx -o pmergesort main.cpp rank.cpp merge.cpp genarr.cpp
- * mpirun -np 4 pmergesort
- */
-
 void initenv(int argc, char **argv, int my_rank, int p) {
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
@@ -23,24 +18,25 @@ int main(int argc, char **argv) {
   char message[100];
   MPI_Status status;
   int n = 0;
+  initenv(argc, argv, my_rank, p);
 
   if (my_rank == 0) {
     cout << "n: ";
     cin >> n;
     a = genarr(n);
-  }
-  
-  for(int i = 0; i < n; i++)
-    cout << "a[" << i << "]: " << a[i] << endl;
-  
-  initenv(argc, argv, my_rank, p);
-  /* broadcast array to all processors */
-  MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
-  mergesort(a, 0, n - 1);
-  cout << "sorted array: " << endl;
+    cout << "unsorted:" << endl;
+    
+    for(int i = 0; i < n; i++)
+      cout << "a[" << i << "]: " << a[i] << endl;
 
-  for(int i = 0; i < n; i++)
-    cout << "a[" << i << "]: " << a[i] << endl;
+    /* broadcast array to all processors */
+    MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
+    mergesort(a, 0, n - 1);
+    cout << "sorted:" << endl;
+
+    for(int i = 0; i < n; i++)
+      cout << "a[" << i << "]: " << a[i] << endl;
+  }
 
   MPI_Finalize();
   return 0;
