@@ -14,6 +14,7 @@ void initenv(int argc, char **argv, int my_rank, int p) {
 }
 
 int main(int argc, char **argv) {
+  int *a;
   int my_rank;
   int p;
   int source;
@@ -22,9 +23,12 @@ int main(int argc, char **argv) {
   char message[100];
   MPI_Status status;
   int n = 0;
-  cout << "n: ";
-  cin >> n;
-  int *a = genarr(n);
+
+  if (my_rank == 0) {
+    cout << "n: ";
+    cin >> n;
+    a = genarr(n);
+  }
   
   for(int i = 0; i < n; i++)
     cout << "a[" << i << "]: " << a[i] << endl;
