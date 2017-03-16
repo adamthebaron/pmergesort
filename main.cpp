@@ -20,10 +20,18 @@ int main(int argc, char **argv) {
   cout << "n: ";
   cin >> n;
   int *a = genarr(n);
+  
   for(int i = 0; i < n; i++)
     cout << "a[" << i << "]: " << a[i] << endl;
-  initenv(argc, argv, my_rank, p);
   
+  initenv(argc, argv, my_rank, p);
+  MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
+  mergesort(a, 0, n - 1);
+  cout << "sorted array: " << endl;
+
+  for(int i = 0; i < n; i++)
+    cout << "a[" << i << "]: " << a[i] << endl;
+
   MPI_Finalize();
   return 0;
 }
