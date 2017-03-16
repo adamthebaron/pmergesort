@@ -1,7 +1,10 @@
 #include <iostream>
+#include <cmath>
 #include <stdio.h>
 #include <string.h>
 #include "mpi.h"
+
+#define LOG(x) log(x) / log(2)
 
 /* merge.cpp */
 void mergesort(int* a, int first, int last);
