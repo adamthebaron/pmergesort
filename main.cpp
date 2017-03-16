@@ -2,12 +2,6 @@
 
 using namespace std;
 
-void initenv(int argc, char **argv, int my_rank, int p) {
-  MPI_Init(&argc, &argv);
-  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &p);
-}
-
 int main(int argc, char **argv) {
   int *a;
   int my_rank;
@@ -18,7 +12,9 @@ int main(int argc, char **argv) {
   char message[100];
   MPI_Status status;
   int n = 0;
-  initenv(argc, argv, my_rank, p);
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &p);
 
   if (my_rank == 0) {
     cout << "n: ";

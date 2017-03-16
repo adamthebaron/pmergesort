@@ -14,7 +14,9 @@ void swap(int* a, int x, int y);
 
 /* rank.cpp */
 /* gotta use uppercase R
- * because prototype conflicts with std::rank
+ * because prototype conflicts with std::rank.
+ * i could just not use std namespace but, yknow...
+ * i could just not use c++ either
  */
 int Rank(int* a, int first, int last, int valToFind);
 
@@ -23,4 +25,3 @@ int* genarr(int n);
 
 /* main.cpp */
 int main(int argc, char ** argv);
-void initenv(int argc, char **argv, int my_rank, int p);
