@@ -2,7 +2,8 @@
 
 using namespace std;
 
-int Rank(int* a, int first, int last, int valToFind) {
+int
+Rank(int* a, int first, int last, int valToFind) {
   int m = last / 2;
   if (last < 1)
     return 0;
