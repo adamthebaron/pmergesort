@@ -10,7 +10,10 @@ void pmerge(int*a, int first, int last, int mid);
 void swap(int* a, int x, int y);
 
 /* rank.cpp */
-int rank(int* a, int first, int last, int valToFind);
+/* gotta use uppercase R
+ * because prototype conflicts with std::rank
+ */
+int Rank(int* a, int first, int last, int valToFind);
 
 /* genarr.cpp */
 int* genarr(int n);

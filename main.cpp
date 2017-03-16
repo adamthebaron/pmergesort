@@ -2,6 +2,11 @@
 
 using namespace std;
 
+/*
+ * mpicxx -o pmergesort main.cpp rank.cpp merge.cpp genarr.cpp
+ * mpirun -np 4 pmergesort
+ */
+
 void initenv(int argc, char **argv, int my_rank, int p) {
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
@@ -25,6 +30,7 @@ int main(int argc, char **argv) {
     cout << "a[" << i << "]: " << a[i] << endl;
   
   initenv(argc, argv, my_rank, p);
+  /* broadcast array to all processors */
   MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
   mergesort(a, 0, n - 1);
   cout << "sorted array: " << endl;
