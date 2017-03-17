@@ -1,7 +1,10 @@
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "mpi.h"
 
 #define LOG(x) log(x) / log(2)
