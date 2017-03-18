@@ -13,21 +13,18 @@ swap(int* a, int x, int y) {
 void
 smerge(int* a, int first1, int last1, int first2, int last2) {
 	int b, c, d;
-	int a1[last1];
-	int a2[last2];
-	cout << "last1: " << last1 << " last2: " << last2 << endl;
-
-	for(int i = 0; i < last1; i++)
+	int half1 = last1 - first1 + 1;
+	int half2 = last2 - first2 + 1;
+	int a1[half1];
+	int a2[half2];
+	for(int i = 0; i < half1; i++)
 		a1[i] = a[first1 + i];
-
-	for(int i = 0; i < last2; i++)
+	for(int i = 0; i < half2; i++)
 		a2[i] = a[first2 + i];
-  
 	b = 0;
 	c = 0;
 	d = first1;
-  
-	while (b < last1 && c < last2) {
+	while (b < half1 && c < half2) {
 		if(a1[b] <= a2[c]) {
 			a[d] = a1[b];
 			b++;
@@ -37,18 +34,16 @@ smerge(int* a, int first1, int last1, int first2, int last2) {
 		}
 		d++;
 	}
-  
-	while(b < last1) {
+	while(b < half1) {
 		a[d] = a1[b];
 		b++;
 		d++;
 	}
-  
-  while(c < last2) {
-    a[d] = a2[c];
-    c++;
-    d++;
-  }
+	while(c < half2) {
+		a[d] = a2[c];
+		c++;
+		d++;
+	}
 }
 
 void
