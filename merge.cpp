@@ -54,6 +54,8 @@ pmerge(int* a, int first, int last, int mid) {
 
 void
 mergesort(int* a, int first, int last) {
+	if (last <= 10)
+		return;
 	int mid;
   
 	if (last <= first)
