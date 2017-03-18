@@ -12,22 +12,33 @@ swap(int* a, int x, int y) {
 
 void
 smerge(int* a, int first1, int last1, int first2, int last2) {
-  int b, c, d, e;
+  int b, c, d;
   int a1[last1];
   int a2[last2];
   
-  for (int i = 0; i < last1; i++)
+  for(int i = 0; i < last1; i++)
     a1[i] = a[first1 + i];
 
-  for (int i = 0; i < last2; i++)
-    a2[i] = a[(first2 + 1) + i];
-
+  for(int i = 0; i < last2; i++)
+    a2[i] = a[first2 + i];
+  
+  cout << "a1: ";
+  
+  for(int i = 0; i < last1; i++)
+	  cout << a1[i];
+  
+  cout << endl;
+  cout << "a2: ";
+  
+  for(int i = 0; i < last2; i++)
+	  cout << a2[i];
+  
+  cout << endl;
   b = 0;
   c = 0;
   d = first1;
-  e = first2 + 1;
-
-  while(b < last1 && c < last2) {
+  
+  while (b < last1 && c < last2) {
     if(a1[b] <= a2[c]) {
       a[d] = a1[b];
       b++;
@@ -55,15 +66,6 @@ void
 pmerge(int* a, int first, int last, int mid) {
   /* hell goes here */
   int x = last / LOG(last);
-  //cout << "x: " << x << endl;
-  int aselect[x];
-  int bselect[x];
-  //int* sranka[];
-  //int* srankb[];
-
-  for (int i = 0; i < last + 1 - LOG(last); i++)
-    aselect[i] = a[i];
-  
 }
 
 void
@@ -72,6 +74,7 @@ mergesort(int* a, int first, int last) {
   
   if (last <= first)
     return;
+
   if (first + 1 == last) {
     if (a[first] > a[last])
       swap(a, first, last);
@@ -81,5 +84,6 @@ mergesort(int* a, int first, int last) {
   mid = (first + last) / 2;
   mergesort(a, first, mid);
   mergesort(a, mid + 1, last);
-  pmerge(a, first, last, mid);
+  smerge(a, first, mid, mid + 1, last);
+  //pmerge(a, first, last, mid);
 }

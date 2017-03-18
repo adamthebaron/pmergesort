@@ -25,11 +25,14 @@ main(int argc, char **argv) {
     a = genarr(n);
     cout << "unsorted:" << endl;
     cout << "rank " << my_rank << ": ";
+	
     for(int i = 0; i < n; i++)
       cout << a[i] << " ";
-    cout << endl;
+    
+	cout << endl;
     /* broadcast array to all processors */
     MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
+	mergesort(a, 0, n - 1);
   }
   else {
     MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -37,16 +40,19 @@ main(int argc, char **argv) {
     /* broadcast array to all processors */
     MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
     cout << "rank " << my_rank << ": ";
+	
     for(int i = 0; i < n; i++)
       cout << a[i] << " ";
-    cout << endl;
+    
+	cout << endl;
   }
-    mergesort(a, 0, n - 1);
-    //cout << "sorted:" << endl;
+  //mergesort(a, 0, n - 1);
+  cout << "sorted:" << endl;
 
-    //for(int i = 0; i < n; i++)
-    //cout << "a[" << i << "]: " << a[i] << endl;
-
+  for(int i = 0; i < n; i++)
+    cout << a[i] << " ";
+  
+  cout << endl;
   MPI_Finalize();
   return 0;
 }
