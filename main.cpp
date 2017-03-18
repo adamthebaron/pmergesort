@@ -4,55 +4,54 @@ using namespace std;
 
 int
 main(int argc, char **argv) {
-  int *a;
-  int my_rank;
-  int p;
-  int source;
-  int dest;
-  int tag = 0;
-  char message[100];
-  MPI_Status status;
-  int n = 0;
-  MPI_Init(&argc, &argv);
-  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &p);
+	int *a;
+	int my_rank;
+	int p;
+	int source;
+	int dest;
+	int tag = 0;
+	char message[100];
+	MPI_Status status;
+	int n = 0;
+	MPI_Init(&argc, &argv);
+	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &p);
 
-  if (my_rank == 0) {
-    cout << "n: ";
-    cin >> n;
-    /* broadcast n to all processors */
-    MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    a = genarr(n);
-    cout << "unsorted:" << endl;
-    cout << "rank " << my_rank << ": ";
+	if (my_rank == 0) {
+		cout << "n: ";
+		cin >> n;
+		/* broadcast n to all processors */
+		MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+		a = genarr(n);
+		cout << "unsorted:" << endl;
+		cout << "rank " << my_rank << ": ";
 	
-    for(int i = 0; i < n; i++)
-      cout << a[i] << " ";
+		for(int i = 0; i < n; i++)
+			cout << a[i] << " ";
     
-	cout << endl;
-    /* broadcast array to all processors */
-    MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
+		cout << endl;
+		/* broadcast array to all processors */
+		MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
+	} else {
+		MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+		a = new int[n];
+		/* broadcast array to all processors */
+		MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
+		cout << "rank " << my_rank << ": ";
+	
+		for(int i = 0; i < n; i++)
+			cout << a[i] << " ";
+    
+		cout << endl;
+	}
+
 	mergesort(a, 0, n - 1);
-  }
-  else {
-    MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    a = new int[n];
-    /* broadcast array to all processors */
-    MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
-    cout << "rank " << my_rank << ": ";
-	
-    for(int i = 0; i < n; i++)
-      cout << a[i] << " ";
-    
-	cout << endl;
-  }
-  //mergesort(a, 0, n - 1);
-  cout << "sorted:" << endl;
+	cout << "sorted:" << endl;
 
-  for(int i = 0; i < n; i++)
-    cout << a[i] << " ";
+	for(int i = 0; i < n; i++)
+		cout << a[i] << " ";
   
-  cout << endl;
-  MPI_Finalize();
-  return 0;
+	cout << endl;
+	MPI_Finalize();
+	return 0;
 }
