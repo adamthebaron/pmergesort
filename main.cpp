@@ -26,7 +26,7 @@ main(int argc, char **argv) {
 		cout << "unsorted:" << endl;
 		cout << "rank " << my_rank << ": ";
 	
-		for(int i = 0; i < n; i++)
+		for (int i = 0; i < n; i++)
 			cout << a[i] << " ";
     
 		cout << endl;
@@ -39,7 +39,7 @@ main(int argc, char **argv) {
 		MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
 		cout << "rank " << my_rank << ": ";
 	
-		for(int i = 0; i < n; i++)
+		for (int i = 0; i < n; i++)
 			cout << a[i] << " ";
     
 		cout << endl;
@@ -48,7 +48,7 @@ main(int argc, char **argv) {
 	mergesort(a, 0, n - 1);
 	cout << "sorted:" << endl;
 
-	for(int i = 0; i < n; i++)
+	for (int i = 0; i < n; i++)
 		cout << a[i] << " ";
   
 	cout << endl;

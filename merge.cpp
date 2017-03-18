@@ -68,6 +68,6 @@ mergesort(int* a, int first, int last) {
 	mid = (first + last) / 2;
 	mergesort(a, first, mid);
 	mergesort(a, mid + 1, last);
-	smerge(a, first, mid, mid + 1, last);
-	//pmerge(a, first, last, mid);
+	//smerge(a, first, mid, mid + 1, last);
+	pmerge(a, first, last, mid);
 }
