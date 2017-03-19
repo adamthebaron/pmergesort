@@ -45,7 +45,7 @@ main(int argc, char **argv) {
 		cout << endl;
 	}
 
-	mergesort(a, 0, n - 1);
+	mergesort(a, 0, n - 1, my_rank);
 	cout << "sorted:" << endl;
 
 	for (int i = 0; i < n; i++)

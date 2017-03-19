@@ -47,15 +47,21 @@ smerge(int* a, int first1, int last1, int first2, int last2) {
 }
 
 void
-pmerge(int* a, int first, int last, int mid) {
+pmerge(int* a, int first, int last, int mid, int my_rank) {
 	/* hell goes here */
-	int x = last / LOG(last);
+	int x = ceil(last / LOG(last));
+	cout << endl << "x: " << x << endl;
+	int *sranka = new int[x];
+	int *srankb = new int[x];
+	int local_start = my_rank;
+	/* local work to get rank */
+	int local_rank = 0;
+	//local_rank = 
+	
 }
 
 void
-mergesort(int* a, int first, int last) {
-	if (last <= 10)
-		return;
+mergesort(int* a, int first, int last, int my_rank) {
 	int mid;
   
 	if (last <= first)
@@ -68,8 +74,8 @@ mergesort(int* a, int first, int last) {
 		}
 
 	mid = (first + last) / 2;
-	mergesort(a, first, mid);
-	mergesort(a, mid + 1, last);
-	smerge(a, first, mid, mid + 1, last);
-	//pmerge(a, first, last, mid);
+	mergesort(a, first, mid, my_rank);
+	mergesort(a, mid + 1, last, my_rank);
+	//smerge(a, first, mid, mid + 1, last);
+	pmerge(a, first, last, mid, my_rank);
 }
