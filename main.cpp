@@ -4,7 +4,7 @@ using namespace std;
 
 int
 main(int argc, char **argv) {
-	int *a;
+	int* a;
 	int my_rank;
 	int p;
 	int source;
@@ -18,11 +18,15 @@ main(int argc, char **argv) {
 	MPI_Comm_size(MPI_COMM_WORLD, &p);
 
 	if (my_rank == 0) {
-		cout << "n: ";
-		cin >> n;
+		//cout << "n: ";
+		//cin >> n;
+		n = 64;
+		a = new int[n]{
+		12, 14, 19, 20, 25, 32, 36, 39, 40, 41, 43, 44, 48, 49, 51, 55, 56, 57, 58, 65, 67, 69, 70, 72, 74, 77, 79, 80, 81, 84, 88, 98,
+		 3,  4,  5,  8,  9, 10, 13, 15, 17, 21, 24, 26, 29, 33, 34, 37, 42, 45, 47, 53, 59, 61, 65, 68, 71, 75, 78, 82, 83, 87, 91, 93
+		};
 		/* broadcast n to all processors */
 		MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
-		a = genarr(n);
 		cout << "unsorted:" << endl;
 		cout << "rank " << my_rank << ": ";
 	
@@ -45,7 +49,7 @@ main(int argc, char **argv) {
 		cout << endl;
 	}
 
-	mergesort(a, 0, n - 1, my_rank);
+	mergesort(a, 0, n - 1, my_rank, p);
 	cout << "sorted:" << endl;
 
 	for (int i = 0; i < n; i++)

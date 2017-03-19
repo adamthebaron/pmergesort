@@ -10,9 +10,9 @@
 #define LOG(x) log(x) / log(2)
 
 /* merge.cpp */
-void mergesort(int* a, int first, int last, int my_rank);
+void mergesort(int* a, int first, int last, int my_rank, int p);
 void smerge(int* a, int first1, int last1, int first2, int last2);
-void pmerge(int*a, int first, int last, int mid, int my_rank);
+void pmerge(int*a, int first, int last, int mid, int my_rank, int p);
 void swap(int* a, int x, int y);
 
 /* rank.cpp */

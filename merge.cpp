@@ -47,21 +47,25 @@ smerge(int* a, int first1, int last1, int first2, int last2) {
 }
 
 void
-pmerge(int* a, int first, int last, int mid, int my_rank) {
+pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	/* hell goes here */
 	int x = ceil(last / LOG(last));
 	cout << endl << "x: " << x << endl;
 	int *sranka = new int[x];
 	int *srankb = new int[x];
 	int local_start = my_rank;
-	/* local work to get rank */
-	int local_rank = 0;
-	//local_rank = 
-	
+	int partition = ceil((last / 2) / LOG(last));
+
+	//for (int i = local_start; i < partition; i += p)
+	//	sranka[i] = Rank(a, local_start, last / 2, );
+
+	//MPI_Allreduce(a, a, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 }
 
 void
-mergesort(int* a, int first, int last, int my_rank) {
+mergesort(int* a, int first, int last, int my_rank, int p) {
+	if (last <= 64)
+		return;
 	int mid;
   
 	if (last <= first)
@@ -74,8 +78,8 @@ mergesort(int* a, int first, int last, int my_rank) {
 		}
 
 	mid = (first + last) / 2;
-	mergesort(a, first, mid, my_rank);
-	mergesort(a, mid + 1, last, my_rank);
-	//smerge(a, first, mid, mid + 1, last);
-	pmerge(a, first, last, mid, my_rank);
+	mergesort(a, first, mid, my_rank, p);
+	mergesort(a, mid + 1, last, my_rank, p);
+	smerge(a, first, mid, mid + 1, last);
+	//pmerge(a, first, last, mid, my_rank, p);
 }
