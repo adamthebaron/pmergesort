@@ -7,8 +7,6 @@
 #include <time.h>
 #include "mpi.h"
 
-#define LOG(x) log(x) / log(2)
-
 /* merge.cpp */
 void mergesort(int* a, int first, int last, int my_rank, int p);
 void smerge(int* a, int first1, int last1, int first2, int last2);
