@@ -55,9 +55,9 @@ main(int argc, char **argv) {
 	for (int i = 0; i < n; i++)
 		cout << a[i] << " ";
 
-	/*cout << endl;
-	cout << "first half: rank(99): " << Rank(a, 0, (n / 2) - 1, 99) << endl;
-	cout << "second half: rank(94): " << Rank(a, (n / 2), n - 1, 94) << endl;*/
+	//cout << endl;
+	//cout << "first half: rank(52): " << Rank(a, 0, (n / 2) - 1, 52) << endl;
+	//cout << "second half: rank(11): " << Rank(a, (n / 2), n - 1, 11) << endl;
 	MPI_Finalize();
 	return 0;
 }
