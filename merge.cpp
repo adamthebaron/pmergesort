@@ -92,8 +92,8 @@ void
 mergesort(int* a, int first, int last, int my_rank, int p) {
 	int mid = (first + last) / 2;
 
-	//if (last <= 100)
-	//	pmerge(a, first, last, mid, my_rank, p);
+	if (last <= 100)
+		pmerge(a, first, last, mid, my_rank, p);
 
 	if (last <= first)
 		return;
@@ -107,5 +107,5 @@ mergesort(int* a, int first, int last, int my_rank, int p) {
 	mergesort(a, first, mid, my_rank, p);
 	mergesort(a, mid + 1, last, my_rank, p);
 	smerge(a, first, mid, mid + 1, last);
-	//pmerge(a, first, last, mid, my_rank, p);
+	pmerge(a, first, last, mid, my_rank, p);
 }

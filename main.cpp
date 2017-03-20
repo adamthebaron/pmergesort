@@ -49,17 +49,15 @@ main(int argc, char **argv) {
 		cout << endl;
 	}
 
-	//mergesort(a, 0, n - 1, my_rank, p);
-	//cout << "sorted:" << endl;
+	mergesort(a, 0, n - 1, my_rank, p);
+	cout << "sorted:" << endl;
 
-	//for (int i = 0; i < n; i++)
-	//	cout << a[i] << " ";
+	for (int i = 0; i < n; i++)
+		cout << a[i] << " ";
 
-	cout << endl;
-	/* rank of a number in first half */
-	cout << "first half: rank(26): " << Rank(a, 0, (n / 2) - 1, 26) << endl;
-	/* rank of a number in second half */
-	cout << "second half: rank(10): " << Rank(&a[n / 2], (n / 2), n - 1, 10) << endl;
+	/*cout << endl;
+	cout << "first half: rank(99): " << Rank(a, 0, (n / 2) - 1, 99) << endl;
+	cout << "second half: rank(94): " << Rank(a, (n / 2), n - 1, 94) << endl;*/
 	MPI_Finalize();
 	return 0;
 }
