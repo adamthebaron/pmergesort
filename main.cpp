@@ -29,10 +29,10 @@ main(int argc, char **argv) {
 		MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
 		cout << "unsorted:" << endl;
 		cout << "rank " << my_rank << ": ";
-	
+
 		for (int i = 0; i < n; i++)
 			cout << a[i] << " ";
-    
+
 		cout << endl;
 		/* broadcast array to all processors */
 		MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
@@ -42,21 +42,24 @@ main(int argc, char **argv) {
 		/* broadcast array to all processors */
 		MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
 		cout << "rank " << my_rank << ": ";
-	
+
 		for (int i = 0; i < n; i++)
 			cout << a[i] << " ";
-    
+
 		cout << endl;
 	}
 
-	mergesort(a, 0, n - 1, my_rank, p);
-	cout << "sorted:" << endl;
+	//mergesort(a, 0, n - 1, my_rank, p);
+	//cout << "sorted:" << endl;
 
-	for (int i = 0; i < n; i++)
-		cout << a[i] << " ";
-  
+	//for (int i = 0; i < n; i++)
+	//	cout << a[i] << " ";
+
 	cout << endl;
-	cout << "Rank(33): " << Rank(a, 0, n - 1, 33) << endl;
+	/* rank of a number in first half */
+	cout << "first half: rank(26): " << Rank(a, 0, (n / 2) - 1, 26) << endl;
+	/* rank of a number in second half */
+	cout << "second half: rank(10): " << Rank(&a[n / 2], (n / 2), n - 1, 10) << endl;
 	MPI_Finalize();
 	return 0;
 }

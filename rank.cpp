@@ -17,7 +17,7 @@ Rank(int* a, int first, int last, int valToFind) {
 	}
 
 	if (valToFind < a[m])
-		return Rank(a, 1, m - 1, valToFind);
+		return Rank(a, first, m - 1, valToFind);
 	else
 		return m + Rank(&a[m], m + 1, last, valToFind);
 }
