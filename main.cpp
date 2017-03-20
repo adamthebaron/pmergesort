@@ -23,7 +23,7 @@ main(int argc, char **argv) {
 		n = 64;
 		a = new int[n]{
 		12, 14, 19, 20, 25, 32, 36, 39, 40, 41, 43, 44, 48, 49, 51, 55, 56, 57, 58, 65, 67, 69, 70, 72, 74, 77, 79, 80, 81, 84, 88, 98,
-		 3,  4,  5,  8,  9, 10, 13, 15, 17, 21, 24, 26, 29, 33, 34, 37, 42, 45, 47, 53, 59, 61, 65, 68, 71, 75, 78, 82, 83, 87, 91, 93
+		 3,  4,  5,  8,  9, 10, 13, 15, 17, 21, 24, 26, 29, 33, 34, 37, 42, 45, 47, 53, 59, 61, 66, 68, 71, 75, 78, 82, 83, 87, 91, 93
 		};
 		/* broadcast n to all processors */
 		MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -50,16 +50,13 @@ main(int argc, char **argv) {
 	}
 
 	mergesort(a, 0, n - 1, my_rank, p);
-	int valToFind;
-	cout << "valToFind: ";
-	cin >> valToFind;
-	cout << "Rank(" << valToFind << "): " << Rank(a, 0, 63, valToFind) << endl;
 	cout << "sorted:" << endl;
 
 	for (int i = 0; i < n; i++)
 		cout << a[i] << " ";
   
 	cout << endl;
+	cout << "Rank(98): " << Rank(a, 0, n - 1, 98) << endl;
 	MPI_Finalize();
 	return 0;
 }
