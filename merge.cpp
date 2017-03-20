@@ -49,12 +49,12 @@ smerge(int* a, int first1, int last1, int first2, int last2) {
 void
 pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	/* hell goes here */
-	cout << endl << "last: " << last << endl;
 	int x = ceil(last / LOG(last));
-	cout << endl << "x: " << x << endl;
 	int m = ceil(last / 2);
 	int *sranka = new int[x];
 	int *srankb = new int[x];
+	int *localsranka = new int[x];
+	int *localsrankb = new int[x];
 	int local_start = my_rank;
 	int partition = ceil((last / 2) / LOG(last));
 	int lval;
@@ -63,39 +63,38 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	for (int i = 0; i < x; i++) {
 		sranka[i] = 0;
 		srankb[i] = 0;
+		localsranka[i] = 0;
+		localsrankb[i] = 0;
 	}
 
 	for (int i = local_start; i < partition; i += p) {
-		cout << "i: " << i << endl;
 		lval = i + LOG(m);
-		sranka[i] = Rank(a, local_start, m, a[lval]);
+		localsranka[i] = Rank(a, local_start, m, a[lval]);
 		rval = i + LOG(m) + m;
-		srankb[i] = Rank(&a[m], local_start, last, a[rval]);
+		localsrankb[i] = Rank(&a[m], local_start, last, a[rval]);
 	}
+
+	MPI_Allreduce(&localsranka, &sranka, m, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(&localsrankb, &srankb, m, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
 	cout << "sranka: ";
 
-	for (int i = 0; i < x; i++) {
-		if (sranka[i] == 0)
-			continue;
-		cout << "(i = " << i << ") " << sranka[i] << " ";
-	}
+	for (int i = 0; i < x; i++)
+		cout << sranka[i] << " ";
 
 	cout << "srankb: ";
 
-	for (int i = 0; i < x; i++) {
-		if (srankb[i] == 0)
-			continue;
-		cout << "(i = " << i << ") " << srankb[i] << " ";
-	}
-
-	//MPI_Allreduce(a, a, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+	for (int i = 0; i < x; i++)
+		cout << srankb[i] << " ";
 }
 
 void
 mergesort(int* a, int first, int last, int my_rank, int p) {
-	int mid;
-  
+	int mid = (first + last) / 2;
+
+	if (last <= 100)
+		pmerge(a, first, last, mid, my_rank, p);
+
 	if (last <= first)
 		return;
 
@@ -105,9 +104,7 @@ mergesort(int* a, int first, int last, int my_rank, int p) {
 			return;
 		}
 
-	mid = (first + last) / 2;
-	//mergesort(a, first, mid, my_rank, p);
-	//mergesort(a, mid + 1, last, my_rank, p);
-	//smerge(a, first, mid, mid + 1, last);
+	mergesort(a, first, mid, my_rank, p);
+	mergesort(a, mid + 1, last, my_rank, p);
 	pmerge(a, first, last, mid, my_rank, p);
 }
