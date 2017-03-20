@@ -50,6 +50,10 @@ main(int argc, char **argv) {
 	}
 
 	mergesort(a, 0, n - 1, my_rank, p);
+	int valToFind;
+	cout << "valToFind: ";
+	cin >> valToFind;
+	cout << "Rank(" << valToFind << "): " << Rank(a, 0, 63, valToFind) << endl;
 	cout << "sorted:" << endl;
 
 	for (int i = 0; i < n; i++)

@@ -48,7 +48,7 @@ smerge(int* a, int first1, int last1, int first2, int last2) {
 
 void
 pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
-	/* hell goes here */
+	/* parahell */
 	int x = ceil(last / LOG(last));
 	int m = ceil(last / 2);
 	int *sranka = new int[x];
@@ -92,8 +92,8 @@ void
 mergesort(int* a, int first, int last, int my_rank, int p) {
 	int mid = (first + last) / 2;
 
-	if (last <= 100)
-		pmerge(a, first, last, mid, my_rank, p);
+	//if (last <= 100)
+	//	pmerge(a, first, last, mid, my_rank, p);
 
 	if (last <= first)
 		return;
@@ -106,5 +106,6 @@ mergesort(int* a, int first, int last, int my_rank, int p) {
 
 	mergesort(a, first, mid, my_rank, p);
 	mergesort(a, mid + 1, last, my_rank, p);
-	pmerge(a, first, last, mid, my_rank, p);
+	smerge(a, first, mid, mid + 1, last);
+	//pmerge(a, first, last, mid, my_rank, p);
 }
