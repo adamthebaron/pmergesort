@@ -49,8 +49,10 @@ smerge(int* a, int first1, int last1, int first2, int last2) {
 void
 pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	/* parahell */
+	cout << "mid: " << mid << endl;
+	cout << "last: " << last << endl;
 	int partition = ceil((last / 2) / log2(last / 2));
-	int m = ceil(last / 2);
+	//int m = ceil(last / 2);
 	int *sranka = new int[partition];
 	int *srankb = new int[partition];
 	int *localsranka = new int[partition];
@@ -65,28 +67,28 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		localsranka[i] = 0;
 		localsrankb[i] = 0;
 	}
-	if (my_rank == 3) {
-		cout << "localsranka before: ";
+	/* if (my_rank == 3) {
+		cout << "localsrankb before: ";
 		for(int i = 0; i < partition; i++)
-		cout << localsranka[i] << " ";
-	}
+		cout << localsrankb[i] << " ";
+	} */
 	cout << endl;
 	for (int i = local_start; i < partition; i += p) {
-		index = i * log2(last);
+		index = i * log2(mid);
 		//cout << "index: " << index << " i: " << i;
-		localsranka[i] = Rank(a, mid, last, a[index]);
-		localsrankb[i] = Rank(a, 0, mid - 1, a[index + mid + 1]);
-		if (my_rank == 0)
-		cout << " a[index]: " << a[index] << " a[index + m + 1]: " << a[index + m + 1] << endl;
+		localsranka[i] = Rank(a, mid + 1, last, a[index]);
+		localsrankb[i] = Rank(a, 0, mid, a[index + mid + 1]);
+		//if (my_rank == 3)
+		//cout << " a[index]: " << a[index] << " a[index + mid + 1]: " << a[index + mid + 1] << " index: " << index << " index + mid + 1: " << index + mid + 1 << endl;
 	}
 
 	//cout << "my_rank: " << my_rank << endl;
-	cout << "localsranka after: ";
+	/* cout << "localsrankb after: ";
 	if (my_rank == 3) {
 	for(int i = 0; i < partition; i++)
-		cout << localsranka[i] << " ";
+		cout << localsrankb[i] << " ";
 	cout << endl;
-	}
+	} */
 
 	//cout << endl;
 	//cout << "localsrankb: ";
@@ -99,7 +101,7 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 
 	cout << endl;
 	} */
-	/*
+
 	MPI_Allreduce(localsranka, sranka, partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 	MPI_Allreduce(localsrankb, srankb, partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
@@ -114,7 +116,6 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	for (int i = 0; i < partition; i++)
 		cout << srankb[i] << " ";
 	}
-	*/
 }
 
 void
