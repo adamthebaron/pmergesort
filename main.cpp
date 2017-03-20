@@ -56,7 +56,7 @@ main(int argc, char **argv) {
 		cout << a[i] << " ";
   
 	cout << endl;
-	cout << "Rank(98): " << Rank(a, 0, n - 1, 98) << endl;
+	cout << "Rank(33): " << Rank(a, 0, n - 1, 33) << endl;
 	MPI_Finalize();
 	return 0;
 }
