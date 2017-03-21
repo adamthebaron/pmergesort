@@ -11,38 +11,13 @@ swap(int* a, int x, int y) {
 }
 
 void
-sort(int *a, int first, int last, int middle) {
-	int b, c, d;
-	int half1 = middle - first + 1;
-	int half2 = last - middle;
-	int a1[half1];
-	int a2[half2];
-	for(int i = 0; i < half1; i++)
-		a1[i] = a[first + i];
-	for(int i = 0; i < half2; i++)
-		a2[i] = a[middle + 1 + i];
-	b = 0;
-	c = 0;
-	d = first;
-	while (b < half1 && c < half2) {
-		if(a1[b] <= a2[c]) {
-			a[d] = a1[b];
-			b++;
-		} else {
-			a[d] = a2[c];
-			c++;
-		}
-		d++;
-	}
-	while(b < half1) {
-		a[d] = a1[b];
-		b++;
-		d++;
-	}
-	while(c < half2) {
-		a[d] = a2[c];
-		c++;
-		d++;
+sort(int *a, int n) {
+	int b, c;
+	for (int i = 1; i < n; i++) {
+		c = a[i];
+		for (j = i - 1; j >= 0 && a[j] > c; j--)
+			a[j + 1] = a[j];
+		a[j + 1] = c;
 	}
 }
 
@@ -95,8 +70,10 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	int *win = new int[last + 1];
 	int local_start = my_rank;
 	int index = 0;
-	int *endpointsa = new int[2 * partition];
-	int *endpointsb = new int[2 * partition];
+	int *localpointsa = new int[2 * partition];
+	int *localpointsb = new int[2 * partition];
+	int *pointsa = new int[2 * partition];
+	int *pointsb = new int[2 * partition];
 	cout << "last: " << last << endl;
 	cout << "partition: " << partition << endl;
 	for (int i = 0; i < partition; i++) {
@@ -106,7 +83,14 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		localsrankb[i] = 0;
 	}
 
-	for (int i = 0; i < last + 1; i++)
+	for (int i = 0; i < 2 * partition; i++) {
+		pointsa[i] = 0;
+		pointsb[i] = 0;
+		localpointsa[i] = 0;
+		localpointsb[i] = 0;
+	}
+
+	for (int i = 0; i < last; i++)
 		win[i] = 0;
 
 	cout << endl;
@@ -132,19 +116,25 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		cout << srankb[i] << " ";
 	cout << endl;
 
-	for (int i = 0; i < partition; i++) {
-		endpointsa[i] = sranka[i] * log2(mid);
-		endpointsb[i] = srankb[i] * log2(mid);
+	for (int i = my_rank; i < partition; i += p {
+		localpointsa[i] = i * log2(mid);
+		localpointsb[i] = i * log2(mid);
 	}
 
-	for (int i = 0; i < partition; i++) {
-		endpointsa[partition + i] = sranka[i];
-		endpointsb[partition + i] = srankb[i];
+	for (int i = my_rank; i < partition; i += p) {
+		localpointsa[partition + i] = sranka[i];
+		localpointsb[partition + i] = srankb[i];
 	}
 
-	endpointmid = ceil((endpointsa * partition + 2) / 2);
-	sort(endpointsa, 0, endpointsa * partition + 2, ceil(endpointmid);
-	sort(endpointsb, 0, endpointsa * partition + 2, ceil(endpointmid);
+	if (my_rank == 0) {
+		cout << "localpointsa: ";
+		for (int i = 0; i < partition * 2; i++)
+			cout << localpointsa[i] << " ";
+		cout << endl;
+	}
+
+	MPI_Allreduce(localpointsa, pointsa, 2 * partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(localpointsb, pointsb, 2 * partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 }
 
 void
