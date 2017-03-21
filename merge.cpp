@@ -11,6 +11,53 @@ swap(int* a, int x, int y) {
 }
 
 void
+sort(int *a, int first, int last, int middle) {
+	int b, c, d;
+	int half1 = middle - first + 1;
+	int half2 = last - middle;
+	int a1[half1];
+	int a2[half2];
+	for(int i = 0; i < half1; i++)
+		a1[i] = a[first + i];
+	for(int i = 0; i < half2; i++)
+		a2[i] = a[middle + 1 + i];
+	b = 0;
+	c = 0;
+	d = first;
+	while (b < half1 && c < half2) {
+		if(a1[b] <= a2[c]) {
+			a[d] = a1[b];
+			b++;
+		} else {
+			a[d] = a2[c];
+			c++;
+		}
+		d++;
+	}
+	while(b < half1) {
+		a[d] = a1[b];
+		b++;
+		d++;
+	}
+	while(c < half2) {
+		a[d] = a2[c];
+		c++;
+		d++;
+	}
+}
+void mergesort(int *a, int first, int last) {
+	if(last <= first) return;
+	if(first + 1 == last) {
+		if(a[first] > a[last]) swap(a, first, last);
+		return; 
+	}
+	int mid = (first + last)/2;
+	mergesort(a, first, mid);
+	mergesort(a, mid + 1, last);
+	merge(a, first, last, mid);
+}
+
+void
 smerge(int* a, int first1, int last1, int first2, int last2) {
 	int b, c, d;
 	int half1 = last1 - first1 + 1;
@@ -59,10 +106,8 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	int *win = new int[last + 1];
 	int local_start = my_rank;
 	int index = 0;
-	int starta = 0;
-	int startb = 0;
-	int enda = 0;
-	int endb = 0;
+	int *endpointsa = new int[2 * partition];
+	int *endpointsb = new int[2 * partition];
 	cout << "last: " << last << endl;
 	cout << "partition: " << partition << endl;
 	for (int i = 0; i < partition; i++) {
@@ -87,7 +132,6 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	MPI_Allreduce(localsranka, sranka, partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 	MPI_Allreduce(localsrankb, srankb, partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
-	if (my_rank == 0) {
 	cout << "sranka: ";
 
 	for (int i = 0; i < partition; i++)
@@ -99,28 +143,18 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		cout << srankb[i] << " ";
 	cout << endl;
 	
-	if (sranka[0] > srankb[0]) {
-		startb = 0;
-		endb++;
-		while (enda < partition && endb < partition) {
-			while (sranka[enda] > srankb[endb])
-				endb++;
-			cout << "startb: " << startb << " endb: " << endb << " enda: " << enda << endl;
-			startb = endb;
-			enda++;
-		}
-	} else {
-		starta = 0;
-		enda++;
-		while (enda < partition && endb < partition) {
-			while (sranka[endb] > srankb[enda])
-				enda++;
-			cout << "starta: " << starta << " enda: " << enda << " endb: " << endb << endl;
-			starta = enda;
-			endb++;
-		}
+	for (int i = 0; i < partition; i++) {
+		endpointsa[i] = sranka[i] * log2(mid);
+		endpointsb[i] = srankb[i] * log2(mid);
 	}
+	
+	for (int i = 0; i < partition; i++) {
+		endpointsa[partition + i] = sranka[i];
+		endpointsb[partition + i] = srankb[i];
 	}
+	
+	sort(endpointsa, 0, partition, ceil(partition / 2));
+	sort(endpointsb, 0, partition, ceil(partition / 2));
 }
 
 void
