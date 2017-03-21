@@ -52,13 +52,17 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	cout << "mid: " << mid << endl;
 	cout << "last: " << last << endl;
 	int partition = ceil((last / 2) / log2(last / 2));
-	//int m = ceil(last / 2);
 	int *sranka = new int[partition];
 	int *srankb = new int[partition];
 	int *localsranka = new int[partition];
 	int *localsrankb = new int[partition];
+	int *win = new int[last + 1];
 	int local_start = my_rank;
-	int index;
+	int index = 0;
+	int starta = 0;
+	int startb = 0;
+	int enda = 0;
+	int endb = 0;
 	cout << "last: " << last << endl;
 	cout << "partition: " << partition << endl;
 	for (int i = 0; i < partition; i++) {
@@ -67,40 +71,18 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		localsranka[i] = 0;
 		localsrankb[i] = 0;
 	}
-	/* if (my_rank == 3) {
-		cout << "localsrankb before: ";
-		for(int i = 0; i < partition; i++)
-		cout << localsrankb[i] << " ";
-	} */
+	
+	for (int i = 0; i < last + 1; i++)
+		win[i] = 0;
+	
 	cout << endl;
 	for (int i = local_start; i < partition; i += p) {
 		index = i * log2(mid);
-		//cout << "index: " << index << " i: " << i;
+		cout << "index: " << index << " i: " << i;
 		localsranka[i] = Rank(a, mid + 1, last, a[index]);
 		localsrankb[i] = Rank(a, 0, mid, a[index + mid + 1]);
-		//if (my_rank == 3)
-		//cout << " a[index]: " << a[index] << " a[index + mid + 1]: " << a[index + mid + 1] << " index: " << index << " index + mid + 1: " << index + mid + 1 << endl;
+		cout << " a[index]: " << a[index] << " a[index + mid + 1]: " << a[index + mid + 1] << " index: " << index << " index + mid + 1: " << index + mid + 1 << endl;
 	}
-
-	//cout << "my_rank: " << my_rank << endl;
-	/* cout << "localsrankb after: ";
-	if (my_rank == 3) {
-	for(int i = 0; i < partition; i++)
-		cout << localsrankb[i] << " ";
-	cout << endl;
-	} */
-
-	//cout << endl;
-	//cout << "localsrankb: ";
-
-/* 	for(int i = 0; i < partition; i++) {
-		//if (!localsrankb[i])
-		//	continue;
-		cout << "(i = " << i << ") " << localsrankb[i] << " ";
-	}
-
-	cout << endl;
-	} */
 
 	MPI_Allreduce(localsranka, sranka, partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 	MPI_Allreduce(localsrankb, srankb, partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
@@ -115,6 +97,29 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 
 	for (int i = 0; i < partition; i++)
 		cout << srankb[i] << " ";
+	cout << endl;
+	
+	if (sranka[0] > srankb[0]) {
+		startb = 0;
+		endb++;
+		while (enda < partition && endb < partition) {
+			while (sranka[enda] > srankb[endb])
+				endb++;
+			cout << "startb: " << startb << " endb: " << endb << " enda: " << enda << endl;
+			startb = endb;
+			enda++;
+		}
+	} else {
+		starta = 0;
+		enda++;
+		while (enda < partition && endb < partition) {
+			while (sranka[endb] > srankb[enda])
+				enda++;
+			cout << "starta: " << starta << " enda: " << enda << " endb: " << endb << endl;
+			starta = enda;
+			endb++;
+		}
+	}
 	}
 }
 
