@@ -15,7 +15,7 @@ sort(int *a, int n) {
 	int b, c;
 	for (int i = 1; i < n; i++) {
 		c = a[i];
-		for (j = i - 1; j >= 0 && a[j] > c; j--)
+		for (int j = i - 1; j >= 0 && a[j] > c; j--)
 			a[j + 1] = a[j];
 		a[j + 1] = c;
 	}
@@ -116,7 +116,7 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		cout << srankb[i] << " ";
 	cout << endl;
 
-	for (int i = my_rank; i < partition; i += p {
+	for (int i = my_rank; i < partition; i += p) {
 		localpointsa[i] = i * log2(mid);
 		localpointsb[i] = i * log2(mid);
 	}
