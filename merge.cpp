@@ -45,17 +45,6 @@ sort(int *a, int first, int last, int middle) {
 		d++;
 	}
 }
-void mergesort(int *a, int first, int last) {
-	if(last <= first) return;
-	if(first + 1 == last) {
-		if(a[first] > a[last]) swap(a, first, last);
-		return; 
-	}
-	int mid = (first + last)/2;
-	mergesort(a, first, mid);
-	mergesort(a, mid + 1, last);
-	merge(a, first, last, mid);
-}
 
 void
 smerge(int* a, int first1, int last1, int first2, int last2) {
@@ -116,10 +105,10 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		localsranka[i] = 0;
 		localsrankb[i] = 0;
 	}
-	
+
 	for (int i = 0; i < last + 1; i++)
 		win[i] = 0;
-	
+
 	cout << endl;
 	for (int i = local_start; i < partition; i += p) {
 		index = i * log2(mid);
@@ -142,19 +131,20 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	for (int i = 0; i < partition; i++)
 		cout << srankb[i] << " ";
 	cout << endl;
-	
+
 	for (int i = 0; i < partition; i++) {
 		endpointsa[i] = sranka[i] * log2(mid);
 		endpointsb[i] = srankb[i] * log2(mid);
 	}
-	
+
 	for (int i = 0; i < partition; i++) {
 		endpointsa[partition + i] = sranka[i];
 		endpointsb[partition + i] = srankb[i];
 	}
-	
-	sort(endpointsa, 0, partition, ceil(partition / 2));
-	sort(endpointsb, 0, partition, ceil(partition / 2));
+
+	endpointmid = ceil((endpointsa * partition + 2) / 2);
+	sort(endpointsa, 0, endpointsa * partition + 2, ceil(endpointmid);
+	sort(endpointsb, 0, endpointsa * partition + 2, ceil(endpointmid);
 }
 
 void
