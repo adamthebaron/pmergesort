@@ -133,8 +133,14 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		cout << endl;
 	}
 
+	pointsa[2 * position] = 0;
+	pointsb[2 * position] = 0;
+
 	MPI_Allreduce(localpointsa, pointsa, 2 * partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 	MPI_Allreduce(localpointsb, pointsb, 2 * partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+
+	sort(pointsa, 2 * position);
+	sort(pointsb, 2 * position);
 }
 
 void
