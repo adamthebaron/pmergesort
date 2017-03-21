@@ -12,10 +12,10 @@ swap(int* a, int x, int y) {
 
 void
 sort(int *a, int n) {
-	int b, c;
+	int b, c, j;
 	for (int i = 1; i < n; i++) {
 		c = a[i];
-		for (int j = i - 1; j >= 0 && a[j] > c; j--)
+		for (j = i - 1; j >= 0 && a[j] > c; j--)
 			a[j + 1] = a[j];
 		a[j + 1] = c;
 	}
@@ -126,41 +126,71 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		localpointsb[partition + i] = srankb[i];
 	}
 
-	if (my_rank == 0) {
-		cout << "localpointsa: ";
-		for (int i = 0; i < partition * 2; i++)
-			cout << localpointsa[i] << " ";
-		cout << endl;
-	}
-
-	pointsa[2 * position] = 0;
-	pointsb[2 * position] = 0;
+	pointsa[2 * partition] = 0;
+	pointsb[2 * partition] = 0;
 
 	MPI_Allreduce(localpointsa, pointsa, 2 * partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 	MPI_Allreduce(localpointsb, pointsb, 2 * partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
-	sort(pointsa, 2 * position);
-	sort(pointsb, 2 * position);
+	sort(pointsa, 2 * partition);
+	sort(pointsb, 2 * partition);
+
+	/*
+	if (my_rank == 0) {
+	cout << "pointsa: ";
+	for (int i = 0; i < partition * 2; i++)
+		cout << pointsa[i] << " ";
+	cout << endl;
+
+	cout << "pointsb: ";
+	for (int i = 0; i < partition * 2; i++)
+		cout << pointsb[i] << " ";
+	cout << endl;
+	}
+	*/
+
+	for (int i = my_rank; i < 2 * partition - 1; i += p)
+		smerge(a, pointsa[i], pointsa[i + 1], pointsb[i], pointsb[i + 1]);
+
+	MPI_Allreduce(a, win, last, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+
+	if (my_rank == 0) {
+		cout << "win: ";
+		for (int i = 0; i < last; i++)
+		cout << win[i] << " ";
+		cout << endl;
+	}
+	delete [] sranka;
+	delete [] srankb;
+	delete [] pointsa;
+	delete [] pointsb;
+	delete [] localsranka;
+	delete [] localsrankb;
+	delete [] localpointsa;
+	delete [] localpointsb;
+	delete [] win;
 }
 
 void
 mergesort(int* a, int first, int last, int my_rank, int p) {
 	int mid = ceil((first + last) / 2);
 
-	if (last <= 100)
-		pmerge(a, first, last, mid, my_rank, p);
+	//if (last <= 100)
+	//	pmerge(a, first, last, mid, my_rank, p);
 
-	if (last <= first)
-		return;
+	//if (last <= first)
+	//	return;
 
-	if (first + 1 == last)
-		if (a[first] > a[last]) {
-			swap(a, first, last);
-			return;
-		}
-
-	//mergesort(a, first, mid, my_rank, p);
-	//mergesort(a, mid + 1, last, my_rank, p);
+	//if (first + 1 == last)
+	//	if (a[first] > a[last]) {
+	//		swap(a, first, last);
+	//		return;
+	//	}
+	cout << "1 ";
+	mergesort(a, first, mid, my_rank, p);
+	cout << "2 ";
+	mergesort(a, mid + 1, last, my_rank, p);
 	//smerge(a, first, mid, mid + 1, last);
-	//pmerge(a, first, last, mid, my_rank, p);
+	cout << "3 " << endl;
+	pmerge(a, first, last, mid, my_rank, p);
 }
