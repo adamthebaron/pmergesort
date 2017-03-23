@@ -3,7 +3,7 @@
 using namespace std;
 
 void
-swap(int* a, int x, int y) {
+Swap(int* a, int x, int y) {
 	int tmp;
 	tmp = a[x];
 	a[x] = a[y];
@@ -11,70 +11,34 @@ swap(int* a, int x, int y) {
 }
 
 void
-sort(int *a, int n) {
-	int b, c, j;
-	for (int i = 1; i < n; i++) {
-		c = a[i];
-		for (j = i - 1; j >= 0 && a[j] > c; j--)
-			a[j + 1] = a[j];
-		a[j + 1] = c;
-	}
-}
+smerge(int* a, int a0, int a1, int* b, int b0, int b1, int* c, int c0, int c1) {
+	int j = a0;
+	int k = b0;
+	int l = c0;
 
-void
-smerge(int* a, int first1, int last1, int first2, int last2, int* win) {
-	int b, c, d;
-	int half1 = last1 - first1 + 1;
-	int half2 = last2 - first2 + 1;
-	int a1[half1];
-	int a2[half2];
-	for(int i = 0; i < half1; i++)
-		a1[i] = a[first1 + i];
-	for(int i = 0; i < half2; i++)
-		a2[i] = a[first2 + i];
-	b = 0;
-	c = 0;
-	d = first1;
-	while (b < half1 && c < half2) {
-		if(a1[b] <= a2[c]) {
-			//a[d] = a1[b];
-			win[d] = a1[b];
-			b++;
-		} else {
-			//a[d] = a2[c];
-			win[d] = a2[c];
-			c++;
-		}
-		d++;
-	}
-	while(b < half1) {
-		//a[d] = a1[b];
-		win[d] = a1[b];
-		b++;
-		d++;
-	}
-	while(c < half2) {
-		//a[d] = a2[c];
-		win[d] = a2[c];
-		c++;
-		d++;
-	}
+	while (j <= a1 && k <= b1)
+		if (a[j] < b[k])
+			c[k++] = a[j++];
+		else
+			c[k++] = b[k++];
+
+	while (j <= a1)
+		c[k++] = a[j++];
+	while (k <= b1)
+		c[k++] = b[k++];
 }
 
 void
 pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	/* parahell */
-	int partition = ceil((last / 2) / log2(last / 2));
+	int partition = ceil((double) (last / 2) / log2(last / 2));
 	int *sranka = new int[partition];
 	int *srankb = new int[partition];
 	int *localsranka = new int[partition];
 	int *localsrankb = new int[partition];
-	int *win = new int[last + 1];
-	int *localwin = new int[last + 1];
+	int *win = new int[last];
+	int *localwin = new int[last];
 	int local_start = my_rank;
-	int index = 0;
-	int *localpointsa = new int[2 * partition];
-	int *localpointsb = new int[2 * partition];
 	int *pointsa = new int[2 * partition];
 	int *pointsb = new int[2 * partition];
 	cout << "last: " << last << endl;
@@ -89,8 +53,6 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	for (int i = 0; i < 2 * partition; i++) {
 		pointsa[i] = 0;
 		pointsb[i] = 0;
-		localpointsa[i] = 0;
-		localpointsb[i] = 0;
 	}
 
 	for (int i = 0; i < last; i++) {
@@ -98,13 +60,10 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		localwin[i] = 0;
 	}
 
-	cout << endl;
 	for (int i = local_start; i < partition; i += p) {
-		index = i * log2(mid);
-		cout << "index: " << index << " i: " << i;
-		localsranka[i] = Rank(a, mid + 1, last, a[index]);
-		localsrankb[i] = Rank(a, 0, mid, a[index + mid + 1]);
-		cout << " a[index]: " << a[index] << " a[index + mid + 1]: " << a[index + mid + 1] << " index: " << index << " index + mid + 1: " << index + mid + 1 << endl;
+		int arr_index = i * log2(mid);
+		localsranka[i] = Rank(a, mid + 1, last, a[arr_index]);
+		localsrankb[i] = Rank(a, 0, mid, a[arr_index + mid + 1]);
 	}
 
 	MPI_Allreduce(localsranka, sranka, partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
@@ -121,35 +80,19 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 		cout << srankb[i] << " ";
 	cout << endl;
 
-	for (int i = my_rank; i < partition; i += p) {
-		localpointsa[i] = 1 + i * log2(mid);
-		localpointsb[i] = 1 + i * log2(mid);
+	for (int i = my_rank; i < partition; i++) {
+		pointsa[i] = i * log2(mid);
+		pointsb[i] = i * log2(mid);
 	}
 
-	for (int i = my_rank; i < partition; i += p) {
-		index = i * log2(mid);
-		localpointsa[partition + i] = Rank(a, mid + 1, last, a[index]);
-		localpointsb[partition + i] = Rank(a, 0, mid, a[index + mid + 1]);
+	for (int i = my_rank; i < partition; i++) {
+		pointsa[partition + i] = srankb[i];
+		pointsb[partition + i] = sranka[i];
 	}
-	
-	cout << "localpointsa: ";
 
-	for (int i = 0; i < 2 * partition; i++)
-		cout << localpointsa[i] << " ";
+	sort(pointsa, pointsa + 2 * partition);
+	sort(pointsb, pointsb + 2 * partition);
 
-	cout << "localpointsb: ";
-
-	for (int i = 0; i < 2 * partition; i++)
-		cout << localpointsb[i] << " ";
-	cout << endl;
-
-	MPI_Allreduce(localpointsa, pointsa, 2 * partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
-	MPI_Allreduce(localpointsb, pointsb, 2 * partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
-
-	sort(pointsa, 2 * partition);
-	sort(pointsb, 2 * partition);
-
-	
 	if (my_rank == 0) {
 	cout << "pointsa: ";
 	for (int i = 0; i < partition * 2; i++)
@@ -163,8 +106,12 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	}
 
 	for (int i = my_rank; i < 2 * partition - 1; i += p)
-		//smerge(a, pointsa[i], pointsa[i + 1], pointsb[i], pointsb[i + 1]);
-		smerge(a, pointsa[i], pointsa[i + 1], pointsb[i], pointsb[i + 1], localwin);
+		smerge(a, pointsa[i], pointsa[i + 1] - 1, &a[last / 2], pointsb[i],
+			   pointsb[i + 1] - 1, localwin, pointsa[i] + pointsb[i],
+           	   pointsb[i + 1] + pointsb[i + 1]);
+	smerge(a, pointsa[2 * partition - 1], last / 2 - 1, &a[last / 2],
+		   pointsb[2 * partition - 1], last / 2 - 1, localwin,
+		   pointsa[2 * partition - 1] + pointsb[2 * partition - 1], last);
 
 	MPI_Allreduce(localwin, win, last + 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 	cout << "win: ";
@@ -177,8 +124,6 @@ pmerge(int* a, int first, int last, int mid, int my_rank, int p) {
 	delete [] pointsb;
 	delete [] localsranka;
 	delete [] localsrankb;
-	delete [] localpointsa;
-	delete [] localpointsb;
 	delete [] win;
 }
 
@@ -198,7 +143,7 @@ mergesort(int* a, int first, int last, int my_rank, int p) {
 
 	if (first + 1 == last)
 		if (a[first] > a[last]) {
-			swap(a, first, last);
+			Swap(a, first, last);
 			return;
 		}
 	mergesort(a, first, mid, my_rank, p);
