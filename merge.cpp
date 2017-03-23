@@ -4,26 +4,27 @@ using namespace std;
 
 void
 smerge(int* a, int a0, int a1, int* b, int b0, int b1, int* c, int c0, int c1) {
-	int j = a0;
-	int k = b0;
-	int l = c0;
+	int i = a0;
+	int j = b0;
+	int k = c0;
 
-	while (j <= a1 && k <= b1)
-		if (a[j] < b[k])
-			c[k++] = a[j++];
+	while (i <= a1 && j <= b1)
+		if (a[i] < b[j])
+			c[k++] = a[i++];
 		else
-			c[k++] = b[k++];
+			c[k++] = b[j++];
 
-	while (j <= a1)
-		c[k++] = a[j++];
-	while (k <= b1)
-		c[k++] = b[k++];
+	while (i <= a1)
+		c[k++] = a[i++];
+	while (j <= b1)
+		c[k++] = b[j++];
 }
 
 void
 pmerge(int* left, int* right, int last, int my_rank, int p) {
 	/* parahell */
-	int partition = ceil((double) (last / 2) / log2(last / 2));
+	int loghalf = log2(last / 2);
+	int partition = ceil(double(last / 2) / loghalf);
 	int *sranka = new int[partition];
 	int *srankb = new int[partition];
 	int *localsranka = new int[partition];
@@ -51,8 +52,8 @@ pmerge(int* left, int* right, int last, int my_rank, int p) {
 	}
 
 	for (int i = local_start; i < partition; i += p) {
-		localsranka[i] = Rank(right, last / 2, left[i * log2(last / 2)]);
-		localsrankb[i] = Rank(left, last / 2, right[i * log2(last / 2)]);
+		localsranka[i] = Rank(right, last / 2, left[i * loghalf]);
+		localsrankb[i] = Rank(left, last / 2, right[i * loghalf]);
 	}
 
 	MPI_Allreduce(localsranka, sranka, partition, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
@@ -72,11 +73,8 @@ pmerge(int* left, int* right, int last, int my_rank, int p) {
 	}
 
 	for (int i = 0; i < partition; i++) {
-		pointsa[i] = i * log2(last / 2);
-		pointsb[i] = i * log2(last / 2);
-	}
-
-	for (int i = 0; i < partition; i++) {
+		pointsa[i] = i * loghalf;
+		pointsb[i] = i * loghalf;
 		pointsa[partition + i] = srankb[i];
 		pointsb[partition + i] = sranka[i];
 	}
@@ -116,11 +114,11 @@ pmerge(int* left, int* right, int last, int my_rank, int p) {
 
 void
 mergesort(int* a, int n, int my_rank, int p) {
-	if (n <= 100)
-		pmerge(a, &a[n / 2], n, my_rank, p);
-	else {
+	//if (n <= 100)
+	//	pmerge(a, &a[n / 2], n, my_rank, p);
+	//else {
 		mergesort(a, n / 2, my_rank, p);
 		mergesort(&a[n / 2], n / 2, my_rank, p);
 		pmerge(a, &a[n / 2], n, my_rank, p);
-	}
+	//}
 }
