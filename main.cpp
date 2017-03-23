@@ -44,8 +44,7 @@ main(int argc, char **argv) {
 		MPI_Bcast(a, n, MPI_INT, 0, MPI_COMM_WORLD);
 	}
 
-	mergesort(a, 0, n, my_rank, p);
-	delete [] a;
+	mergesort(a, n, my_rank, p);
 	MPI_Finalize();
 	return 0;
 }
